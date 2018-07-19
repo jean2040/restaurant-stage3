@@ -43,5 +43,10 @@
         "single"
       ]
     }
+  },
+  "dependencies": {
+    "babelify": "^8.0.0",
+    "browserify": "^16.2.2",
+    "vinyl-source-stream": "^2.0.0"
   }
 }

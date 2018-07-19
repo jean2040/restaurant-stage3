@@ -46,7 +46,7 @@ class DBHelper {
               });
         })
         .catch(error => {
-          callback(`Request failed. Retuend ${error}`, null)
+          callback(`Request failed. Returned ${error}`, null)
         })
   }
 
