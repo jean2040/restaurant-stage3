@@ -41,7 +41,7 @@ class DBHelper {
         .then(response => {
           response.json()
               .then(restaurants => {
-                console.log('restaurants JSON', restaurants);
+                //console.log('restaurants JSON', restaurants);
                 callback(null, restaurants);
               });
         })

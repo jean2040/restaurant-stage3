@@ -1,4 +1,15 @@
+import idb from 'idb';
+
 let cacheName = 'restaurant_reviews';
+
+const dbPromise = idb.open('restaurant_reviews',1,upgradeDB =>{
+  console.log('API Requesting...');
+  switch(upgradeDB.oldVersion){
+    case 0:
+      //Create and Store to the a IndexDB
+      upgradeDB.createObjectStore('restaurants',{keyPath:'id'});
+  }
+});
 
 //Install site assets
 
@@ -12,7 +23,7 @@ self.addEventListener('install', function(event){
                        '/index.html',
                        '/restaurant.html',
                        '/css/styles.css',
-                       '/data/restaurants.json',
+                       //'/data/restaurants.json',
                        'images/1.jpg',
                        'images/2.jpg',
                        'images/3.jpg',
@@ -41,27 +52,80 @@ self.addEventListener('install', function(event){
 self.addEventListener('fetch', event=>{
     let cacheRequest = event.request;
     let cacheUrlObj = new URL(event.request.url);
-
+    //Check If index is less than zero, then request main restaurant page
     if (event.request.url.indexOf('restaurant.html') > -1){
         const cacheURL = 'restaurant.html';
         cacheRequest = new Request(cacheURL);
     }
-    if (cacheUrlObj.hostname !== "localhost"){
-        event.request.mode = "no-cors";
+    /*
+  if (cacheUrlObj.hostname !== "localhost") {
+    event.request.mode = "no-cors";
+  }
+  */
+    //check if the Request is going to the API server
+    const checkURL = new URL(event.request.url);
+    if(checkURL.port === '1337'){
+
+      const urlParts = checkURL.pathname.split('/');
+      //After Split, check if the last piece of the split path is restaurants
+      const id = urlParts[urlParts.length -1] === 'restaurants'? '-1' : urlParts[urlParts.length -1];
+      handleAJAXEvent(event, id)
+    }else{
+      handleNonAJAXEvent(event, cacheRequest)
     }
-
     //console.log(`Fetching: ${event.request.url}`);
-    event.respondWith(
-        caches.match(cacheRequest)
-            .then(response=>{
-                return response || fetch(event.request)
-                    .then(fetchResponse =>{
-                        return caches.open(cacheName).then(cache =>{
-                            cache.put(event.request, fetchResponse.clone());
-                            return fetchResponse
-                        });
-                    })
 
-            })
-    );
+
 });
+
+const handleAJAXEvent = (event, id) =>{
+  //Here the magic Happens...
+  //check if the data is in index db and retrieve it,
+  //if not, get it from API, store it and return it
+  event.respondWith(
+    dbPromise.then(db => {
+      return db.transaction('restaurants')
+        .objectStore('restaurants')
+        .get(id);
+    })
+      .then(data =>{
+        return(
+          //return data if it is there, if not, the fetch the data
+          (data && data.data) || fetch(event.request)
+            .then(fetchAPI => fetchAPI.json())
+            .then(jsonData=>{
+              return dbPromise.then(db=>{
+                const tx = db.transaction('restaurants', 'readwrite');
+                tx.objectStore('restaurants').put({
+                  id: id,
+                  data: jsonData
+                });
+                return jsonData;
+              });
+            })
+        )
+      }).then(finalResponse =>{
+      return new Response(JSON.stringify(finalResponse))
+        })
+      .catch(e => {
+        return new Response("Error while fetching Data", {status: 500});
+      })
+  )
+};
+
+const handleNonAJAXEvent = (event, cacheRequest) => {
+  event.respondWith(
+    caches.match(cacheRequest)
+      .then(response=>{
+        return response || fetch(event.request)
+          .then(fetchResponse =>{
+            return caches.open(cacheName).then(cache =>{
+              cache.put(event.request, fetchResponse.clone());
+              return fetchResponse
+            });
+          })
+
+      })
+  );
+};
+
