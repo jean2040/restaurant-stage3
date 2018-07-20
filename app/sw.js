@@ -1,9 +1,8 @@
 import idb from 'idb';
 
-let cacheName = 'restaurant_reviews';
+let cacheName = 'restaurant_reviews-001';
 
 const dbPromise = idb.open('restaurant_reviews',1,upgradeDB =>{
-  console.log('API Requesting...');
   switch(upgradeDB.oldVersion){
     case 0:
       //Create and Store to the a IndexDB
@@ -22,7 +21,7 @@ self.addEventListener('install', function(event){
                        '/',
                        '/index.html',
                        '/restaurant.html',
-                       '/css/styles.css',
+                       '/styles/styles.css',
                        //'/data/restaurants.json',
                        'images/1.jpg',
                        'images/2.jpg',
@@ -68,10 +67,20 @@ self.addEventListener('fetch', event=>{
 
       const urlParts = checkURL.pathname.split('/');
       //After Split, check if the last piece of the split path is restaurants
-      const id = urlParts[urlParts.length -1] === 'restaurants'? '-1' : urlParts[urlParts.length -1];
-      handleAJAXEvent(event, id)
+      let id = checkURL.searchParams.get('restaurant_id')-0;
+      if (!id){
+        if (checkURL.pathname.indexOf('restaurants')){
+          id = urlParts[urlParts.length -1] === 'restaurants'? '-1' : urlParts[urlParts.length -1];
+        } else {
+          id = checkURL.searchParams.get('restaurants_id');
+        }
+      }
+
+      handleAJAXEvent(event, id);
+      console.log('AJAX event with '+ id);
     }else{
-      handleNonAJAXEvent(event, cacheRequest)
+      handleNonAJAXEvent(event, cacheRequest);
+      console.log('none AJAX event');
     }
     //console.log(`Fetching: ${event.request.url}`);
 
@@ -105,6 +114,7 @@ const handleAJAXEvent = (event, id) =>{
             })
         )
       }).then(finalResponse =>{
+        console.log(finalResponse);
       return new Response(JSON.stringify(finalResponse))
         })
       .catch(e => {
@@ -119,7 +129,8 @@ const handleNonAJAXEvent = (event, cacheRequest) => {
       .then(response=>{
         return response || fetch(event.request)
           .then(fetchResponse =>{
-            return caches.open(cacheName).then(cache =>{
+            return caches.open(cacheName)
+              .then(cache =>{
               cache.put(event.request, fetchResponse.clone());
               return fetchResponse
             });
