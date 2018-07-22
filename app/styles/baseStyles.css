@@ -1,0 +1,106 @@
+@charset "utf-8";
+/* CSS Document */
+
+body,td,th,p{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  color: #333;
+  line-height: 1.5;
+}
+body {
+  background-color: #fdfdfd;
+  margin: 0;
+  position:relative;
+  max-width: 1000px;
+}
+ul, li {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 10pt;
+  color: #333;
+}
+a {
+  color: orange;
+  text-decoration: none;
+}
+a:hover, a:focus {
+  color: #3397db;
+  text-decoration: none;
+}
+a img{
+  border: none 0px #fff;
+}
+
+button {
+  color: orange;
+  text-decoration: none;
+}
+button:hover, button:focus {
+  color: #3397db;
+  text-decoration: none;
+}
+button{
+  border: none 0px #fff;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0 0 20px;
+}
+article, aside, canvas, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+#maincontent {
+  background-color: #f3f3f3;
+  min-height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+}
+#footer {
+  background-color: #252831;
+  color: #aaa;
+  font-size: 8pt;
+  letter-spacing: 1px;
+  padding: 25px;
+  text-align: center;
+  text-transform: uppercase;
+}
+.labels{
+  display: none;
+}
+/* ====================== Navigation ====================== */
+nav {
+  width: 100%;
+  height: 80px;
+  background-color: #252831;
+  text-align:center;
+}
+nav h1 {
+  margin: auto;
+}
+nav h1 a {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 200;
+  letter-spacing: 10px;
+  text-transform: uppercase;
+}
+
+/* ====================== Map ====================== */
+#map {
+  height: 100%;
+  width: 100%;
+  background-color: #ccc;
+ }
+#map-container {
+  background: blue none repeat scroll 0 0;
+  height: 40vh;
+  right: 0;
+  top: 50px;
+  width: 100%;
+}
+#footer {
+  bottom: 0;
+  /*position: absolute;
+  width: 100%;
+  */
+}

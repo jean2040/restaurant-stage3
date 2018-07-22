@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <!-- Normalize.css for better cross-browser consistency -->
   <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
   <!-- Main CSS file -->
-  <link rel="stylesheet" href="styles/styles.css" type="text/css">
   <title>Restaurant Info</title>
 </head>
 
@@ -18,7 +16,6 @@
     <nav>
       <h1><a href="/">Restaurant Reviews</a></h1>
     </nav>
-
     <nav aria-label="Breadcrumb">
       <!-- Beginning breadcrumb -->
       <ul id="breadcrumb" >
@@ -26,15 +23,12 @@
       </ul>
       <!-- End breadcrumb -->
     </nav>
-
     <!-- End nav -->
   </header>
   <!-- End header -->
-
   <!-- Beginning main -->
   <main id="maincontent">
     <!-- Beginning map -->
-
     <section id="map-container" role="application" aria-label="Map with Restaurant address">
       <div id="map"></div>
     </section>
@@ -58,14 +52,15 @@
     <!-- End reviews -->
   </main>
   <!-- End main -->
-
   <!-- Beginning footer -->
   <footer id="footer">
     Copyright (c) 2017 <a href="/"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
   <!-- End footer -->
-
+  <link rel="stylesheet" href="styles/baseStyles.css" type="text/css">
+  <link rel="stylesheet" href="styles/reviews.css" type="text/css">
   <!-- Beginning scripts -->
+  <script src="scripts/register_sw.js"></script>
   <!-- Database helpers -->
   <script type="text/javascript" src="scripts/dbhelper.js"></script>
   <!-- Main javascript file -->
@@ -73,21 +68,5 @@
   <!-- Google Maps -->
   <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIFkw_7cofhX8Fy1noDDE5ZXuz0Zeoxo0&libraries=places&callback=initMap"></script>
   <!-- End scripts -->
-  <script>
-      //Register service Worker
-      if('serviceWorker' in navigator){
-          navigator.serviceWorker
-              .register('/sw.js')
-              .then(reg => {
-                  console.log("Service Worker Registered " + reg.scope);
-              })
-              .catch(error=>{
-                  console.log("Registration Error: " + error)
-              })
-      }
-  </script>
-</body>
-
-
-
+  </body>
 </html>

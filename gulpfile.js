@@ -8,6 +8,7 @@ const browserSync = require('browser-sync').create();
 const del = require('del');
 const wiredep = require('wiredep').stream;
 const runSequence = require('run-sequence');
+const minify = require('gulp-minify');
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -15,26 +16,24 @@ const reload = browserSync.reload;
 let dev = true;
 
 gulp.task('styles', () => {
-  return gulp.src('app/styles/*.scss')
-    .pipe($.plumber())
+  return gulp
+    .src('app/styles/*.css')
     .pipe($.if(dev, $.sourcemaps.init()))
-    .pipe($.sass.sync({
-      outputStyle: 'expanded',
-      precision: 10,
-      includePaths: ['.']
-    }).on('error', $.sass.logError))
-    .pipe($.autoprefixer({browsers: ['> 1%', 'last 2 versions', 'Firefox ESR']}))
+    .pipe(
+      $.autoprefixer({ browsers: ['> 1%', 'last 2 versions', 'Firefox ESR'] })
+    )
     .pipe($.if(dev, $.sourcemaps.write()))
     .pipe(gulp.dest('.tmp/styles'))
-    .pipe(reload({stream: true}));
+    .pipe(reload({ stream: true }));
 });
 
 gulp.task('scripts', () => {
-  return gulp.src('app/scripts/**/*.js')
+  return gulp.src(['app/scripts/**/*.js', '!app/scripts/**/dbhelper.js'])
     .pipe($.plumber())
     .pipe($.if(dev, $.sourcemaps.init()))
     .pipe($.babel())
     .pipe($.if(dev, $.sourcemaps.write('.')))
+    .pipe(minify())
     .pipe(gulp.dest('.tmp/scripts'))
     .pipe(reload({stream: true}));
 });

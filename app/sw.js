@@ -11,7 +11,6 @@ const dbPromise = idb.open('restaurant_reviews',1,upgradeDB =>{
 });
 
 //Install site assets
-
 self.addEventListener('install', function(event){
    event.waitUntil(
        caches.open(cacheName)
@@ -23,27 +22,15 @@ self.addEventListener('install', function(event){
                        '/restaurant.html',
                        '/styles/styles.css',
                        //'/data/restaurants.json',
-                       'images/1.jpg',
-                       'images/2.jpg',
-                       'images/3.jpg',
-                       'images/4.jpg',
-                       'images/5.jpg',
-                       'images/6.jpg',
-                       'images/7.jpg',
-                       'images/8.jpg',
-                       'images/9.jpg',
-                       'images/10.jpg',
                        '/scripts/dbhelper.js',
                        '/scripts/main.js',
                        '/scripts/restaurant_info.js',
                        '/scripts/register_sw.js',
-
             ])
                    .catch(error => {
                        console.log("Caches open failed " + error)
                    })
            })
-
    );
 });
 
