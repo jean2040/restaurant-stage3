@@ -21,11 +21,13 @@ self.addEventListener('install', function(event){
                        '/index.html',
                        '/restaurant.html',
                        '/styles/styles.css',
-                       //'/data/restaurants.json',
-                       '/scripts/dbhelper.js',
+                        '/styles/reviews.css',
+                        '/styles/baseStyles.css',
+                        '/scripts/dbhelper.js',
                        '/scripts/main.js',
                        '/scripts/restaurant_info.js',
                        '/scripts/register_sw.js',
+                      'images/no-image.png'
             ])
                    .catch(error => {
                        console.log("Caches open failed " + error)
@@ -121,9 +123,12 @@ const handleNonAJAXEvent = (event, cacheRequest) => {
               cache.put(event.request, fetchResponse.clone());
               return fetchResponse
             });
+          }).catch(e => {
+            if (event.request.url.indexOf(".jpg")>-1){
+              return caches.match('/images/no-image.png')
+            }
+            return new Response("Not connected ot the Internet", {status:404})
           })
-
-      })
-  );
+      }));
 };
 

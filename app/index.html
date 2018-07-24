@@ -2,24 +2,23 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
+  <link rel="stylesheet" type="text/css" href="styles/baseStyles.css">
+  <link rel="stylesheet" type="text/css" href="styles/styles.css">
+  <title>Restaurant Reviews</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#262932">
   <link rel="manifest" href="manifest.json">
-  <link rel="stylesheet" src="//normalize-css.googlecode.com/svn/trunk/normalize.css" />
-
-  <title>Restaurant Reviews</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
 </head>
-
 <body>
   <header>
     <nav>
       <h1><a href="/" tabindex="1">Restaurant Reviews</a></h1>
     </nav>
   </header>
-
   <main id="maincontent">
     <section id="map-container" aria-labelledby="map-description" role="application">
-      <div id="map"></div>
+      <div id="map" role="application" aria-label="Google Map"></div>
     </section>
     <label id="map-description" class="labels">Google Map Application</label>
     <section id="select-neighborhoods">
@@ -37,14 +36,12 @@
       <ul id="restaurants-list"></ul>
     </section>
   </main>
-  <link rel="stylesheet" type="text/css" href="styles/baseStyles.css">
-  <link rel="stylesheet" type="text/css" href="styles/styles.css">
   <script src="scripts/register_sw.js"></script>
-  <script type="application/javascript" charset="utf-8" src="scripts/dbhelper.js"></script>
-  <script type="application/javascript" charset="utf-8" src="scripts/main.js"></script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIFkw_7cofhX8Fy1noDDE5ZXuz0Zeoxo0&libraries=places&callback=initMap"></script>
   <footer id="footer">
     Copyright (c) 2017 <a href="/" tabindex="1"><strong>Restaurant Reviews</strong></a> All Rights Reserved.
   </footer>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIFkw_7cofhX8Fy1noDDE5ZXuz0Zeoxo0&libraries=places&callback=initMap"></script>
+  <script type="application/javascript" charset="utf-8" src="scripts/dbhelper.js"></script>
+  <script type="application/javascript" charset="utf-8" src="scripts/main-min.js"></script>
 </body>
 </html>
