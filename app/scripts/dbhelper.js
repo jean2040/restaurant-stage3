@@ -20,7 +20,7 @@ class DBHelper {
       fetchURL = DBHelper.DATABASE_URL
     }else{
       fetchURL = DBHelper.DATABASE_URL + '/' + id;
-    }
+      }
     fetch(fetchURL, {
       method: 'GET'
     })
@@ -35,6 +35,27 @@ class DBHelper {
           callback(`Request failed. Returned ${error}`, null)
         })
   }
+
+  static fetchReviews(callback, id){
+    let revURL = 'http://localhost:1337/reviews/?restaurant_id='+ id;
+
+    fetch(revURL,{
+      method: 'GET'
+    })
+    .then(res=>{
+      res.json()
+      .then(reviews => {
+        //console.log(reviews)
+        callback(null, reviews);
+      });
+    }).catch(error => {
+      callback(error, null);
+    })
+
+
+  }
+
+
   /**
    * Fetch a restaurant by its ID.
    */
@@ -52,6 +73,22 @@ class DBHelper {
         }
       }
     });
+  }
+
+  static fetchReviewById(id, callback){
+    DBHelper.fetchReviews(
+      (error, reviews) => {
+        if(error){
+          callback(error, null);
+        }else{
+          const res_reviews = reviews.filter(r => r.restaurant_id == id);
+          if(res_reviews){
+              callback(null,res_reviews);
+          }else{
+            callback('No Reviews for this restaurant', null);
+          }
+        }
+      });
   }
 
   /**
@@ -142,6 +179,8 @@ class DBHelper {
     });
   }
 
+
+
   /**
    * Restaurant page URL.
    */
@@ -169,5 +208,7 @@ class DBHelper {
     );
     return marker;
   }
+
+
 
 }

@@ -10,7 +10,7 @@ var markers = []
 const fetchNeighborhoods = () => {
   DBHelper.fetchNeighborhoods((error, neighborhoods) => {
     if (error) { // Got an error
-      console.error(error);
+      //console.error(error);
     } else {
       self.neighborhoods = neighborhoods;
       fillNeighborhoodsHTML();
@@ -37,7 +37,7 @@ const fillNeighborhoodsHTML = (neighborhoods = self.neighborhoods) => {
 const fetchCuisines = () => {
   DBHelper.fetchCuisines((error, cuisines) => {
     if (error) { // Got an error!
-      console.error(error);
+      //console.error(error);
     } else {
       self.cuisines = cuisines;
       fillCuisinesHTML();
@@ -98,7 +98,7 @@ const updateRestaurants = () => {
 
   DBHelper.fetchRestaurantByCuisineAndNeighborhood(cuisine, neighborhood, (error, restaurants) => {
     if (error) { // Got an error!
-      console.error(error);
+      //console.error(error);
     } else {
       resetRestaurants(restaurants);
       fillRestaurantsHTML();

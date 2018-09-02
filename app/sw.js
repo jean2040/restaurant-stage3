@@ -66,10 +66,10 @@ self.addEventListener('fetch', event=>{
       }
 
       handleAJAXEvent(event, id);
-      console.log('AJAX event with '+ id);
+      //console.log('AJAX event with '+ id);
     }else{
       handleNonAJAXEvent(event, cacheRequest);
-      console.log('none AJAX event');
+      //console.log('none AJAX event');
     }
     //console.log(`Fetching: ${event.request.url}`);
 
@@ -103,7 +103,7 @@ const handleAJAXEvent = (event, id) =>{
             })
         )
       }).then(finalResponse =>{
-        console.log(finalResponse);
+        //console.log(finalResponse);
       return new Response(JSON.stringify(finalResponse))
         })
       .catch(e => {

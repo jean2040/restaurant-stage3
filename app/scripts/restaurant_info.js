@@ -39,11 +39,20 @@ const fetchRestaurantFromURL = (callback) => {
         console.error('Fetch Restaurant error',error);
         return;
       }
-      fillRestaurantHTML();
+
       callback(null, restaurant)
     });
+    DBHelper.fetchReviewById(id,(error, reviews)=>{
+      self.restaurant.reviews = reviews;
+      if(!reviews){
+        console.error('Fetch Review Error', error);
+        return;
+      }
+      fillRestaurantHTML();
+      callback(null, restaurant)
+    })
   }
-}
+};
 
 /**
  * Create restaurant HTML and add it to the webpage
@@ -106,6 +115,7 @@ const fillReviewsHTML = (reviews = self.restaurant.reviews) => {
   container.appendChild(title);
 
   if (!reviews) {
+    console.log(reviews);
     const noReviews = document.createElement('p');
     noReviews.innerHTML = 'No reviews yet!';
     container.appendChild(noReviews);
@@ -128,7 +138,7 @@ const createReviewHTML = (review) => {
   li.appendChild(name);
 
   const date = document.createElement('p');
-  date.innerHTML = review.date;
+  date.innerHTML = new Date(review.updatedAt).toDateString();
   li.appendChild(date);
 
   const rating = document.createElement('p');
@@ -141,6 +151,7 @@ const createReviewHTML = (review) => {
 
   return li;
 };
+
 
 /**
  * Add restaurant name to the breadcrumb navigation menu
