@@ -46,12 +46,25 @@
     </section>
     <!-- end restaurant -->
     <!-- Beginning reviews -->
-    <section id="reviews-container">
-      <div>
-        <form action="">
-          <input type="text" name="review" id="review">
+    <section id="reviews-form" aria-label="Form to add Reviews to the restaurant">
+
+        <form id="sendReviews" class="reviews-form" onsubmit="postReviews(); return false">
+          <label for="name">Reviewer name</label>
+          <input type="text" name="name" id="name">
+
+          <input type="radio" name="rating"  value="1">
+          <input type="radio" name="rating"  value="2">
+          <input type="radio" name="rating"  value="3">
+          <input type="radio" name="rating"  value="4">
+          <input type="radio" name="rating" value="5">
+          <label for="comments">Comments</label>
+          <textarea name="comments" id="comments" rows="4"></textarea>
+          <button type="submit">Send</button>
         </form>
-      </div>
+
+    </section>
+    <section id="reviews-container">
+
       <ul id="reviews-list"></ul>
     </section>
     <!-- End reviews -->

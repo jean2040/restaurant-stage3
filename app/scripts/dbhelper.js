@@ -38,14 +38,13 @@ class DBHelper {
 
   static fetchReviews(callback, id){
     let revURL = 'http://localhost:1337/reviews/?restaurant_id='+ id;
-
     fetch(revURL,{
       method: 'GET'
     })
     .then(res=>{
       res.json()
       .then(reviews => {
-        //console.log(reviews)
+        console.log(reviews);
         callback(null, reviews);
       });
     }).catch(error => {
@@ -88,7 +87,7 @@ class DBHelper {
             callback('No Reviews for this restaurant', null);
           }
         }
-      });
+      },id);
   }
 
   /**
@@ -208,6 +207,36 @@ class DBHelper {
     );
     return marker;
   }
+
+  static updateCachedReviews(data){
+    console.log('Updating cache');
+    dbPromise.then()
+  }
+
+  static addPendingReviews(url, method, data){
+
+  }
+
+  static postNewReview(data, callback){
+    const url = 'http://localhost:1337/reviews';
+    const method = 'post';
+    DBHelper.updateCachedReviews(data);
+    DBHelper.addPendingReviews(url,method, data);
+    callback(null, null);
+  }
+
+  static postReview(data, callback){
+    DBHelper.postNewReview(data,(error, result)=>{
+      if (error){
+        callback(error,null);
+        return;
+      }else {
+        callback(null, result)
+      }
+    });
+  }
+
+
 
 
 

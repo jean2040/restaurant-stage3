@@ -7,5 +7,6 @@ if('serviceWorker' in navigator){
         })
         .catch(error=>{
             console.log('Registration Error: ' + error)
-        })
+        });
+
 }

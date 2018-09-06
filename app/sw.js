@@ -1,5 +1,6 @@
 import idb from 'idb';
 
+
 let cacheName = 'restaurant_reviews-001';
 
 const dbPromise = idb.open('restaurant_reviews',1,upgradeDB =>{
@@ -131,4 +132,6 @@ const handleNonAJAXEvent = (event, cacheRequest) => {
           })
       }));
 };
+
+
 
