@@ -1,6 +1,26 @@
+
 /**
  * Common database helper functions.
  */
+import idb from "idb";
+
+const dbPromise = idb.open('restaurant_reviews',3,upgradeDB =>{
+  switch(upgradeDB.oldVersion){
+    case 0:
+      upgradeDB.createObjectStore("restaurants", {keyPath: "id"});
+    case 1:
+    {
+      const reviewsStore = upgradeDB.createObjectStore("reviews", {keyPath: "id"});
+      reviewsStore.createIndex("restaurant_id", "restaurant_id");
+    }
+    case 2:
+      upgradeDB.createObjectStore("pending", {
+        keyPath: "id",
+        autoIncrement: true
+      });
+  }
+});
+
 class DBHelper {
 
   /**
@@ -21,8 +41,9 @@ class DBHelper {
     }else{
       fetchURL = DBHelper.DATABASE_URL + '/' + id;
       }
+      console.log(fetchURL);
     fetch(fetchURL, {
-      method: 'GET'
+      method: 'get'
     })
         .then(response => {
           response.json()
@@ -210,11 +231,101 @@ class DBHelper {
 
   static updateCachedReviews(data){
     console.log('Updating cache');
-    dbPromise.then()
+    dbPromise.then(db=>{
+      const tx = db.transaction('reviews', "readwrite");
+      const store = tx.objectStore('reviews');
+      store.put({
+        id: Date.now(),
+        'restaurant_id': data.id,
+        data: data
+      });
+      console.log('reviews is in the store')
+      return tx.complete
+    })
   }
 
   static addPendingReviews(url, method, data){
+    const dbPromise = idb.open('restaurant_reviews');
+    dbPromise.then(db =>{
+      const tx = db.transaction('pending', 'readwrite');
+      tx.objectStore('pending')
+        .put({
+          data:{
+            url,
+            method,
+            data
+          }
+        })
+    })
+      .catch(error => {})
+      .then(DBHelper.nextPending());
+  }
 
+  static nextPending(){
+    DBHelper.addPendingPost(DBHelper.nextPending)
+
+  }
+
+  static addPendingPost(callback){
+    let url , method, data ;
+    dbPromise.then(db=>{
+      if (!db.objectStoreNames.length){
+        console.log('no DB avaiable');
+        db.close();
+        return
+      }
+
+      const tx = db.transaction('pending', 'readwrite');
+      tx.objectStore('pending')
+        .openCursor()
+        .then(cursor =>{
+          //if it is empty, stop
+          if (!cursor){
+            return;
+          }
+          const value = cursor.value;
+          url = cursor.value.data.url;
+          method = cursor.value.data.method;
+          data = cursor.value.data.data
+
+          if ((!url || !method) || (method ==='post' && !data)){
+            cursor.delete()
+              .then(callback());
+            return;
+          } ;
+          //Properties to be reused on fetch
+          const properties = {
+            body: JSON.stringify(data),
+            method: method
+          }
+          console.log('Sending Post', properties);
+          fetch(url,properties)
+            .then(res => {
+              //ifresponse is not good. we are offline
+              if (!res.ok && !res.redirected){
+                return;
+              }
+            })
+            .then(()=>{
+              //If it gets here, then it was a succes and we need to delete the pending item
+              const deltx = db.transaction('pending', 'readwrite');
+              deltx.objectStore('pending')
+                .openCursor()
+                .then(cursor=>{
+                  cursor.delete()
+                    .then(()=>{
+                      callback();
+                    })
+                })
+              console.log('pending item has been deleted')
+            })
+
+        })
+        .catch(error => {
+          console.log("error in the cursor");
+          return;
+        })
+    })
   }
 
   static postNewReview(data, callback){
@@ -237,7 +348,5 @@ class DBHelper {
   }
 
 
-
-
-
 }
+window.DBHelper = DBHelper;

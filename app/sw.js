@@ -6,8 +6,18 @@ let cacheName = 'restaurant_reviews-001';
 const dbPromise = idb.open('restaurant_reviews',1,upgradeDB =>{
   switch(upgradeDB.oldVersion){
     case 0:
-      //Create and Store to the a IndexDB
-      upgradeDB.createObjectStore('restaurants',{keyPath:'id'});
+      upgradeDB.createObjectStore("restaurants", {keyPath: "id"});
+    case 1:
+    {
+      const reviewsStore = upgradeDB.createObjectStore("reviews", {keyPath: "id"});
+      reviewsStore.createIndex("restaurant_id", "restaurant_id");
+    }
+    case 2:
+      upgradeDB.createObjectStore("pending", {
+        keyPath: "id",
+        autoIncrement: true
+      });
+
   }
 });
 
