@@ -27,6 +27,15 @@
 #select-neighborhoods{
   width: 100%;
  }
+.favContainer button{
+  right: 15px;
+  top: 2px;
+  height: 40px;
+  width: 40px;
+  border: 0 !important;
+  background: none !important;
+  position: absolute;
+}
 #restaurants-list {
   background-color: #f3f3f3;
   list-style: outside none none;
@@ -47,6 +56,7 @@
   min-height: 380px;
   padding: 0 30px 25px;
   min-width: 200px;
+  position: relative;
 }
 #restaurants-list .restaurant-img {
   background-color: #ccc;
@@ -83,13 +93,7 @@
   text-transform: uppercase;
 }
 
-.favContainer button{
-  right: 0;
-  top: 4px;
-  height: 40px;
-  width: 40px;
-  border: 0;
-}
+
 @media screen and (max-width: 658px) {
   #neighborhoods-select, #cuisines-select{
     width: auto;

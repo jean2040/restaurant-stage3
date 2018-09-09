@@ -366,7 +366,7 @@ class DBHelper {
     const url = `http://localhost:1337/restaurants/${id}/?is_favorite=${newFavState}`;
     const method= 'put';
     DBHelper.updateCachedRestaurant(id, newFavState);
-    DBHelper.addPendingPost(url, method)
+    DBHelper.addPendingReviews(url, method);
   }
 
   static updateCachedRestaurant(id, newFavState){

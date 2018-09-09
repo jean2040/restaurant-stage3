@@ -102,6 +102,32 @@
 #restaurant-hours td {
   color: #666;
 }
+
+#reviews-form {
+  margin: auto;
+  padding-bottom: 65px;
+  max-width: 600px;
+  width: 100%;
+
+}
+#reviewName, #reviewComments{
+  width: 100%;
+  padding-bottom: 15px;
+}
+
+#btnComment{
+  background-color: #943100;
+  border-bottom: 3px solid #eee;
+  color: #fff;
+  display: inline-block;
+  font-size: 13pt;
+  margin: 15px 0 0;
+  padding: 8px 30px 10px;
+  text-align: center;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
 @media screen and (max-width: 658px) {
   #restaurant-container{
     padding-right: 10px;

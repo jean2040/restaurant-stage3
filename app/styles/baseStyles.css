@@ -85,6 +85,11 @@ nav h1 a {
   text-transform: uppercase;
 }
 
+.material-icons{
+  color: #d22e15;
+  font-size: 42px;
+}
+
 /* ====================== Map ====================== */
 #map {
   height: 100%;

@@ -172,22 +172,31 @@ const createRestaurantHTML = (restaurant) => {
 
   const favContainer = document.createElement('div');
   const favorite = document.createElement('button');
+  const icon = document.createElement('i');
+  icon.className = 'material-icons';
   favContainer.className = 'favContainer';
+
   let isFavorite= restaurant.is_favorite;
+  console.log(restaurant.id,isFavorite);
   if (isFavorite){
-    favorite.style.background = 'url("images/icons/_ionicons_svg_md-heart.svg") no-repeat';
+    icon.innerHTML = 'favorite';
+    favorite.setAttribute('arial-label', restaurant.name + ' is a favorite');
   } else {
-    favorite.style.background = 'url("images/icons/_ionicons_svg_md-heart-empty.svg") no-repeat';
+    icon.innerHTML = 'favorite_border';
+    favorite.setAttribute('arial-label', restaurant.name + ' is not a favorite');
     isFavorite = false
   }
   favorite.id = 'favorite_'+ restaurant.id;
+  icon.id = 'favorite_icon_'+ restaurant.id;
+  favorite.name = 'Button favorite_'+ restaurant.id;
   favorite.onclick = event => handleFavorites(restaurant.id, !isFavorite);
   favContainer.append(favorite);
+  favorite.append(icon);
   li.append(favContainer);
 
 
   return li
-}
+};
 
 /**
  * Add markers for current restaurants to the map.
@@ -209,11 +218,13 @@ const handleFavorites = (id, newFavState) =>{
   const currentRestaurant = self.restaurants.filter(restaurant => restaurant.id ===id)[0];
   currentRestaurant.is_favorite = newFavState;
   const favorite = document.getElementById('favorite_'+id);
+  const icon = document.getElementById('favorite_icon_'+ currentRestaurant.id);
   if (newFavState){
-    favorite.style.background = 'url("images/icons/_ionicons_svg_md-heart.svg") no-repeat';
-
+    icon.innerHTML = 'favorite';
+    favorite.setAttribute('arial-label', currentRestaurant.name + ' is a favorite');
   } else {
-    favorite.style.background = 'url("images/icons/_ionicons_svg_md-heart-empty.svg") no-repeat';
+    icon.innerHTML = 'favorite_border';
+    favorite.setAttribute('arial-label', currentRestaurant.name + ' is not a favorite');
 
   }
   favorite.onclick = event => handleFavorites(currentRestaurant.id, !currentRestaurant.is_favorite);
