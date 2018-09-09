@@ -49,8 +49,8 @@ const fetchCuisines = () => {
  * Fetch neighborhoods and cuisines as soon as the page is loaded.
  */
 document.addEventListener('DOMContentLoaded', (event) => {
-  fetchNeighborhoods();
-  fetchCuisines();
+  //fetchNeighborhoods();
+  //fetchCuisines();
 });
 
 /**
@@ -81,6 +81,7 @@ window.initMap = () => {
     scrollwheel: false
   });
   updateRestaurants();
+  DBHelper.nextPending();
 };
 
 /**

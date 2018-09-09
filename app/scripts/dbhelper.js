@@ -41,14 +41,14 @@ class DBHelper {
     }else{
       fetchURL = DBHelper.DATABASE_URL + '/' + id;
       }
-      console.log(fetchURL);
+
     fetch(fetchURL, {
       method: 'get'
     })
         .then(response => {
           response.json()
               .then(restaurants => {
-                //console.log('restaurants JSON', restaurants);
+
                 callback(null, restaurants);
               });
         })
@@ -65,7 +65,7 @@ class DBHelper {
     .then(res=>{
       res.json()
       .then(reviews => {
-        console.log(reviews);
+
         callback(null, reviews);
       });
     }).catch(error => {
@@ -230,16 +230,18 @@ class DBHelper {
   }
 
   static updateCachedReviews(data){
-    console.log('Updating cache');
+    console.log('Updating reviews cache with ', data);
     dbPromise.then(db=>{
       const tx = db.transaction('reviews', "readwrite");
       const store = tx.objectStore('reviews');
+      ///this is storing the review in the reviews IndexDB
+      //It is not updating the right reviews.
       store.put({
         id: Date.now(),
-        'restaurant_id': data.id,
+        'restaurant_id': data.restaurant_id,
         data: data
       });
-      console.log('reviews is in the store')
+      console.log('reviews is in the store');
       return tx.complete
     })
   }

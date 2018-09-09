@@ -1,9 +1,8 @@
 import idb from 'idb';
 
-
 let cacheName = 'restaurant_reviews-001';
 
-const dbPromise = idb.open('restaurant_reviews',1,upgradeDB =>{
+const dbPromise = idb.open('restaurant_reviews',3,upgradeDB =>{
   switch(upgradeDB.oldVersion){
     case 0:
       upgradeDB.createObjectStore("restaurants", {keyPath: "id"});
@@ -17,7 +16,6 @@ const dbPromise = idb.open('restaurant_reviews',1,upgradeDB =>{
         keyPath: "id",
         autoIncrement: true
       });
-
   }
 });
 
@@ -43,10 +41,8 @@ self.addEventListener('install', function(event){
                    .catch(error => {
                        console.log("Caches open failed " + error)
                    })
-           })
-   );
+           }));
 });
-
 //Intercept Web Page requests
 self.addEventListener('fetch', event=>{
     let cacheRequest = event.request;
@@ -63,6 +59,7 @@ self.addEventListener('fetch', event=>{
   */
     //check if the Request is going to the API server
     const checkURL = new URL(event.request.url);
+    //console.log('Request coming from:' + checkURL.port)
     if(checkURL.port === '1337'){
 
       const urlParts = checkURL.pathname.split('/');
@@ -91,6 +88,77 @@ const handleAJAXEvent = (event, id) =>{
   //Here the magic Happens...
   //check if the data is in index db and retrieve it,
   //if not, get it from API, store it and return it
+  if (event.request.method !== "GET") {
+    return fetch(event.request)
+      .then(response => response.json())
+      .then(jsonData => {
+        return jsonData
+      });
+  }
+
+  // Split these request for handling restaurants vs reviews
+  if (event.request.url.indexOf("reviews") > -1) {
+    //push reviews to the reviews IndexDB
+    handleReviewsEvent(event, id);
+  } else {
+    //push restaurants to the reviews IndexDB
+    handleRestaurantEvent(event, id);
+  }
+};
+
+const handleNonAJAXEvent = (event, cacheRequest) => {
+  event.respondWith(
+    caches.match(cacheRequest)
+      .then(response=>{
+        return response || fetch(event.request)
+          .then(fetchResponse =>{
+            return caches.open(cacheName)
+              .then(cache =>{
+                cache.put(event.request, fetchResponse.clone());
+                return fetchResponse
+              });
+          }).catch(error => {
+            if (event.request.url.indexOf(".jpg")>-1){
+              return caches.match('/images/no-image.png')
+            }
+            return new Response("Not connected ot the Internet", error)
+          })
+      }));
+};
+
+const handleReviewsEvent = (event, id) => {
+  event.respondWith(dbPromise.then(db => {
+    return db
+      .transaction("reviews")
+      .objectStore("reviews")
+      .index("restaurant_id")
+      .getAll(id);
+  }).then(data => {
+    return (data.length && data) || fetch(event.request)
+      .then(fetchResponse => fetchResponse.json())
+      .then(data => {
+        return dbPromise.then(idb => {
+          const itx = idb.transaction("reviews", "readwrite");
+          const store = itx.objectStore("reviews");
+          data.forEach(review => {
+            store.put({id: review.id, "restaurant_id": review["restaurant_id"], data: review});
+          })
+          return data;
+        })
+      })
+  }).then(finalResponse => {
+    if (finalResponse[0].data) {
+      // Need to transform the data to the proper format
+      const mapResponse = finalResponse.map(review => review.data);
+      return new Response(JSON.stringify(mapResponse));
+    }
+    return new Response(JSON.stringify(finalResponse));
+  }).catch(error => {
+    return new Response("Error fetching data", error)
+  }))
+};
+
+const handleRestaurantEvent = (event, id)=>{
   event.respondWith(
     dbPromise.then(db => {
       return db.transaction('restaurants')
@@ -114,34 +182,16 @@ const handleAJAXEvent = (event, id) =>{
             })
         )
       }).then(finalResponse =>{
-        //console.log(finalResponse);
+      //console.log(finalResponse);
       return new Response(JSON.stringify(finalResponse))
-        })
-      .catch(e => {
-        return new Response("Error while fetching Data", {status: 500});
+    })
+      .catch(error => {
+        return new Response("Error while fetching Data", error);
       })
   )
-};
+}
 
-const handleNonAJAXEvent = (event, cacheRequest) => {
-  event.respondWith(
-    caches.match(cacheRequest)
-      .then(response=>{
-        return response || fetch(event.request)
-          .then(fetchResponse =>{
-            return caches.open(cacheName)
-              .then(cache =>{
-              cache.put(event.request, fetchResponse.clone());
-              return fetchResponse
-            });
-          }).catch(e => {
-            if (event.request.url.indexOf(".jpg")>-1){
-              return caches.match('/images/no-image.png')
-            }
-            return new Response("Not connected ot the Internet", {status:404})
-          })
-      }));
-};
+
 
 
 

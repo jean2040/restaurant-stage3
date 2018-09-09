@@ -18,6 +18,7 @@ window.initMap = () => {
       DBHelper.mapMarkerForRestaurant(self.restaurant, self.map);
     }
   });
+  DBHelper.nextPending();
 };
 
 /**
@@ -122,7 +123,7 @@ const fillReviewsHTML = (reviews = self.restaurant.reviews) => {
     return;
   }
   const ul = document.getElementById('reviews-list');
-  console.log(reviews);
+  //console.log(reviews);
   reviews.forEach(review => {
     ul.appendChild(createReviewHTML(review));
   });
@@ -179,33 +180,6 @@ const getParameterByName = (name, url) => {
     return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 };
-/*
-const form = document.getElementById('sendReviews');
-form.onsubmit = (e)=>{
-  e.preventDefault();
-  const form = document.querySelector('#sendReviews');
-
-  const data = {};
-  data.restaurant_id= restaurant.id;
-  data.name = form.name.value;
-  data.rating= form.rating.value;
-  data.comments = form.comments.value;
-
-  fetch('http://localhost:1337/reviews',
-    {
-      method: 'post',
-      body: JSON.stringify(data),
-      headers:{
-        'Content-Type': 'application/json'
-      }
-    }).then(res => res.json())
-    .then(response => console.log('Success:', JSON.stringify(response)))
-    .catch(error => console.error('Error:', error));
-
-    console.log(data);
-    console.log(form.comments.value);
-};
-*/
 
 const postReviews = () =>{
   const form = document.querySelector('#sendReviews');
@@ -216,15 +190,16 @@ const postReviews = () =>{
   data.comments = form.comments.value;
   data.createdAt = Date.now();
 
-  console.log(data);
-
   DBHelper.postReview(data,(error, result)=>{
     if (error){
-      console.log(error);
+      console.log('Top Post Review Error',error);
       }
-    console.log('Review callback happened', result)
+    console.log('Review callback happened', result);
+    const ul = document.getElementById('reviews-list');
+    ul.appendChild(createReviewHTML(data));
   });
 
+  /*
   fetch('http://localhost:1337/reviews',
     {
       method: 'post',
@@ -235,7 +210,7 @@ const postReviews = () =>{
     }).then(res => res.json())
     .then(response => console.log('Success:', JSON.stringify(response)))
     .catch(error => console.error('Error:', error));
-
+*/
 
 
 };
