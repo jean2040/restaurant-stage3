@@ -170,6 +170,22 @@ const createRestaurantHTML = (restaurant) => {
   //more.href = DBHelper.urlForRestaurant(restaurant);
   li.append(more);
 
+  const favContainer = document.createElement('div');
+  const favorite = document.createElement('button');
+  favContainer.className = 'favContainer';
+  let isFavorite= restaurant.is_favorite;
+  if (isFavorite){
+    favorite.style.background = 'url("images/icons/_ionicons_svg_md-heart.svg") no-repeat';
+  } else {
+    favorite.style.background = 'url("images/icons/_ionicons_svg_md-heart-empty.svg") no-repeat';
+    isFavorite = false
+  }
+  favorite.id = 'favorite_'+ restaurant.id;
+  favorite.onclick = event => handleFavorites(restaurant.id, !isFavorite);
+  favContainer.append(favorite);
+  li.append(favContainer);
+
+
   return li
 }
 
@@ -186,3 +202,22 @@ const addMarkersToMap = (restaurants = self.restaurants) => {
     self.markers.push(marker);
   });
 }
+
+
+const handleFavorites = (id, newFavState) =>{
+  //Update Restaurant property
+  const currentRestaurant = self.restaurants.filter(restaurant => restaurant.id ===id)[0];
+  currentRestaurant.is_favorite = newFavState;
+  const favorite = document.getElementById('favorite_'+id);
+  if (newFavState){
+    favorite.style.background = 'url("images/icons/_ionicons_svg_md-heart.svg") no-repeat';
+
+  } else {
+    favorite.style.background = 'url("images/icons/_ionicons_svg_md-heart-empty.svg") no-repeat';
+
+  }
+  favorite.onclick = event => handleFavorites(currentRestaurant.id, !currentRestaurant.is_favorite);
+  //send to helper to update value
+  DBHelper.handleFavorites(id, newFavState);
+
+};

@@ -349,6 +349,97 @@ class DBHelper {
     });
   }
 
+  static handleFavorites(id, newFavState){
+    //block more clicks
+    const favButton = document.getElementById('favorite_'+id);
+    favButton.onclick = null;
+    DBHelper.updateFavorite(id,newFavState,(error, result)=>{
+      if (error){
+        console.log("Favorites hadler error", error);
+        return;
+      }
+
+    })
+  }
+
+  static updateFavorite(id, newFavState, callback){
+    const url = `http://localhost:1337/restaurants/${id}/?is_favorite=${newFavState}`;
+    const method= 'put';
+    DBHelper.updateCachedRestaurant(id, newFavState);
+    DBHelper.addPendingPost(url, method)
+  }
+
+  static updateCachedRestaurant(id, newFavState){
+    const favObj = {"is_favorite": newFavState};
+    const dbPromise = idb.open('restaurant_reviews');
+    dbPromise.then(db =>{
+      const tx = db.transaction('restaurants', 'readwrite');
+      const value = tx.objectStore('restaurants')
+        .get('-1')
+        .then(value => {
+          if (!value){
+            console.log('there are not Data inside theIndexDB');
+            return
+          }
+          const data = value.data;
+          const currentRestaurant = data.filter(restaurant=> restaurant.id === id);
+          const restaurantObj = currentRestaurant[0];
+
+
+          const keys = Object.keys(favObj);
+          keys.forEach(k => {
+            restaurantObj[k] = favObj[k];
+          })
+
+          //push into IndexDB
+
+          dbPromise.then(db=>{
+            const tx = db.transaction('restaurants', 'readwrite');
+            tx.objectStore('restaurants')
+              .put({id: '-1', data:data});
+            return tx.complete;
+          })
+         })
+    })
+  // Now, to update the requires restaurant
+    dbPromise.then(db => {
+      const tx = db.transaction("restaurants", "readwrite");
+      const value = tx
+        .objectStore("restaurants")
+        .get(id + "")
+        .then(value => {
+          if (!value) {
+            console.log("No data found in cache");
+            return;
+          }
+          const restaurantObj = value.data;
+          console.log("Specific restaurant obj: ", restaurantObj);
+          // Update restaurantObj with updateObj details
+          if (!restaurantObj)
+            return;
+          const keys = Object.keys(favObj);
+          keys.forEach(k => {
+            restaurantObj[k] = favObj[k];
+          });
+
+          // Push the data back to IndexDB
+          dbPromise.then(db => {
+            const tx = db.transaction("restaurants", "readwrite");
+            tx
+              .objectStore("restaurants")
+              .put({
+                id: id + "",
+                data: restaurantObj
+              });
+            return tx.complete;
+          })
+        })
+    })
+
+  }
 
 }
+
+
+
 window.DBHelper = DBHelper;

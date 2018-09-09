@@ -82,6 +82,14 @@
   text-decoration: none;
   text-transform: uppercase;
 }
+
+.favContainer button{
+  right: 0;
+  top: 4px;
+  height: 40px;
+  width: 40px;
+  border: 0;
+}
 @media screen and (max-width: 658px) {
   #neighborhoods-select, #cuisines-select{
     width: auto;
