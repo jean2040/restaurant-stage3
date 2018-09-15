@@ -41,7 +41,6 @@ class DBHelper {
     }else{
       fetchURL = DBHelper.DATABASE_URL + '/' + id;
       }
-
     fetch(fetchURL, {
       method: 'get'
     })
@@ -56,7 +55,6 @@ class DBHelper {
           callback(`Request failed. Returned ${error}`, null)
         })
   }
-
   static fetchReviews(callback, id){
     let revURL = 'http://localhost:1337/reviews/?restaurant_id='+ id;
     fetch(revURL,{
@@ -74,8 +72,6 @@ class DBHelper {
 
 
   }
-
-
   /**
    * Fetch a restaurant by its ID.
    */
@@ -94,7 +90,6 @@ class DBHelper {
       }
     });
   }
-
   static fetchReviewById(id, callback){
     DBHelper.fetchReviews(
       (error, reviews) => {
@@ -110,7 +105,6 @@ class DBHelper {
         }
       },id);
   }
-
   /**
    * Fetch restaurants by a cuisine type with proper error handling.
    */
@@ -141,7 +135,6 @@ class DBHelper {
       }
     });
   }
-
   /**
    * Fetch restaurants by a cuisine and a neighborhood with proper error handling.
    */
@@ -162,7 +155,6 @@ class DBHelper {
       }
     });
   }
-
   /**
    * Fetch all neighborhoods with proper error handling.
    */
@@ -180,7 +172,6 @@ class DBHelper {
       }
     });
   }
-
   /**
    * Fetch all cuisines with proper error handling.
    */
@@ -198,9 +189,6 @@ class DBHelper {
       }
     });
   }
-
-
-
   /**
    * Restaurant page URL.
    */
@@ -214,7 +202,6 @@ class DBHelper {
   static imageUrlForRestaurant(restaurant) {
     return (`/images/${restaurant.photograph}`);
   }
-
   /**
    * Map marker for a restaurant.
    */
@@ -228,7 +215,6 @@ class DBHelper {
     );
     return marker;
   }
-
   static updateCachedReviews(data){
     console.log('Updating reviews cache with ', data);
     dbPromise.then(db=>{
@@ -245,7 +231,6 @@ class DBHelper {
       return tx.complete
     })
   }
-
   static addPendingReviews(url, method, data){
     const dbPromise = idb.open('restaurant_reviews');
     dbPromise.then(db =>{
@@ -262,21 +247,18 @@ class DBHelper {
       .catch(error => {})
       .then(DBHelper.nextPending());
   }
-
   static nextPending(){
     DBHelper.addPendingPost(DBHelper.nextPending)
 
   }
-
   static addPendingPost(callback){
     let url , method, data ;
     dbPromise.then(db=>{
       if (!db.objectStoreNames.length){
-        console.log('no DB avaiable');
+        console.log('no DB available');
         db.close();
         return
       }
-
       const tx = db.transaction('pending', 'readwrite');
       tx.objectStore('pending')
         .openCursor()
@@ -329,7 +311,6 @@ class DBHelper {
         })
     })
   }
-
   static postNewReview(data, callback){
     const url = 'http://localhost:1337/reviews';
     const method = 'post';
@@ -337,7 +318,6 @@ class DBHelper {
     DBHelper.addPendingReviews(url,method, data);
     callback(null, null);
   }
-
   static postReview(data, callback){
     DBHelper.postNewReview(data,(error, result)=>{
       if (error){
@@ -348,7 +328,6 @@ class DBHelper {
       }
     });
   }
-
   static handleFavorites(id, newFavState){
     //block more clicks
     const favButton = document.getElementById('favorite_'+id);
@@ -361,14 +340,12 @@ class DBHelper {
 
     })
   }
-
   static updateFavorite(id, newFavState, callback){
     const url = `http://localhost:1337/restaurants/${id}/?is_favorite=${newFavState}`;
     const method= 'put';
     DBHelper.updateCachedRestaurant(id, newFavState);
     DBHelper.addPendingReviews(url, method);
   }
-
   static updateCachedRestaurant(id, newFavState){
     const favObj = {"is_favorite": newFavState};
     const dbPromise = idb.open('restaurant_reviews');
@@ -439,7 +416,4 @@ class DBHelper {
   }
 
 }
-
-
-
 window.DBHelper = DBHelper;

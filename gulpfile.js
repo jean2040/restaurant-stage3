@@ -23,6 +23,7 @@ gulp.task('styles', () => {
       $.autoprefixer({ browsers: ['> 1%', 'last 2 versions', 'Firefox ESR'] })
     )
     .pipe($.if(dev, $.sourcemaps.write()))
+    .pipe(minify())
     .pipe(gulp.dest('.tmp/styles'))
     .pipe(reload({ stream: true }));
 });
@@ -53,12 +54,12 @@ gulp.task('dbhelper', () => {
   const b = browserify({
     debug: true
   });
-
   return b
     .transform(babelify)
     .require('app/scripts/dbhelper.js', { entry: true })
     .bundle()
     .pipe(source('dbhelper.js'))
+
     .pipe(gulp.dest('.tmp/scripts/'));
 });
 

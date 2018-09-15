@@ -8,6 +8,7 @@ var markers = [];
  * Fetch all neighborhoods and set their HTML.
  */
 const fetchNeighborhoods = () => {
+
   DBHelper.fetchNeighborhoods((error, neighborhoods) => {
     if (error) { // Got an error
       //console.error(error);
@@ -80,6 +81,8 @@ window.initMap = () => {
     center: loc,
     scrollwheel: false
   });
+  fetchNeighborhoods();
+  fetchCuisines();
   updateRestaurants();
   DBHelper.nextPending();
 };
@@ -175,21 +178,23 @@ const createRestaurantHTML = (restaurant) => {
   const icon = document.createElement('i');
   icon.className = 'material-icons';
   favContainer.className = 'favContainer';
-
+  console.log(restaurant.is_favorite);
   let isFavorite= restaurant.is_favorite;
-  console.log(restaurant.id,isFavorite);
-  if (isFavorite){
+
+  if (isFavorite === 'true'){
     icon.innerHTML = 'favorite';
     favorite.setAttribute('arial-label', restaurant.name + ' is a favorite');
+    isFavorite = 'false'
   } else {
+
     icon.innerHTML = 'favorite_border';
     favorite.setAttribute('arial-label', restaurant.name + ' is not a favorite');
-    isFavorite = false
+    isFavorite = 'true'
   }
   favorite.id = 'favorite_'+ restaurant.id;
   icon.id = 'favorite_icon_'+ restaurant.id;
   favorite.name = 'Button favorite_'+ restaurant.id;
-  favorite.onclick = event => handleFavorites(restaurant.id, !isFavorite);
+  favorite.onclick = event => handleFavorites(restaurant.id, isFavorite);
   favContainer.append(favorite);
   favorite.append(icon);
   li.append(favContainer);
@@ -219,7 +224,7 @@ const handleFavorites = (id, newFavState) =>{
   currentRestaurant.is_favorite = newFavState;
   const favorite = document.getElementById('favorite_'+id);
   const icon = document.getElementById('favorite_icon_'+ currentRestaurant.id);
-  if (newFavState){
+  if (newFavState === 'true'){
     icon.innerHTML = 'favorite';
     favorite.setAttribute('arial-label', currentRestaurant.name + ' is a favorite');
   } else {
@@ -232,3 +237,13 @@ const handleFavorites = (id, newFavState) =>{
   DBHelper.handleFavorites(id, newFavState);
 
 };
+//Show Map
+const toggle_map = () => {
+  if (document.getElementById('map-container').style.display === 'none'){
+    document.getElementById('map-container').style.display = 'block';
+  }
+
+  else {
+    document.getElementById('map-container').style.display = 'none'
+  }
+}

@@ -27,6 +27,10 @@
 #select-neighborhoods{
   width: 100%;
  }
+#map_toggle {
+  position: absolute;
+  right: 8px;
+}
 .favContainer button{
   right: 15px;
   top: 2px;

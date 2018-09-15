@@ -19,12 +19,12 @@
     </nav>
   </header>
   <main id="maincontent">
-    <section id="map-container" aria-labelledby="map-description" role="application">
+    <section id="map-container" aria-labelledby="map-description" role="application" style="display: none">
       <div id="map" role="application" aria-label="Google Map"></div>
     </section>
     <label id="map-description" class="labels">Google Map Application</label>
     <section id="select-neighborhoods">
-      <div class="filter-options" >
+      <div class="filter-options">
         <h2 aria-label="Filter Selects">Filter Results</h2>
         <label for="neighborhoods-select" class="labels">Select a Cuisine</label>
         <select aria-label="Select a NeighborHood"  id="neighborhoods-select" name="neighborhoods" onchange="updateRestaurants()" tabindex="1">
@@ -34,6 +34,7 @@
         <select aria-label="Select a Cuisine" id="cuisines-select" name="cuisines" onchange="updateRestaurants()" tabindex="1">
           <option value="all">All Cuisines</option>
         </select>
+        <button onclick="toggle_map()" id="map_toggle" aria-label="Toggle Map" style="background: content-box;"><i class="material-icons" style="color: white;">directions</i></button>
       </div>
       <ul id="restaurants-list"></ul>
     </section>
